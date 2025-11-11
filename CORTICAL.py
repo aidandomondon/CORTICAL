@@ -333,7 +333,9 @@ class CORTICAL():
 
         eps = self.eps
 
-        if self.channel == 'AWGN' or 'MIMO':
+        if self.channel == 'CUSTOM_GAUSSIAN':
+            ch_output = ch_input + eps * np.random.normal(0, stdev, (test_size, self.data_dim))
+        elif self.channel == 'AWGN' or 'MIMO':
             ch_output = ch_input + eps * np.random.normal(0, 1, (test_size, self.data_dim))
         elif self.channel == 'UNIF':
             delta = np.sqrt(12)*eps
@@ -375,7 +377,7 @@ if __name__ == '__main__':
     parser.add_argument('--alpha', help='Alpha parameter of CORTICAL', default=1)
     parser.add_argument('--channel', help='Type of channel: AWGN, UNIF, AICN, EXP, RAY, MIMO', default='AWGN')
     parser.add_argument('--power_constraint', help='Type of constraint: PP (peak power), AP (amplitude power), PPAP', default='PP')
-
+    parser.add_argument('--stdev', help='Standard deviation of the Gaussian noise if --channel == CUSTOM_GAUSSIAN')
 
     args = parser.parse_args()
 
@@ -384,6 +386,7 @@ if __name__ == '__main__':
     alpha = float(args.alpha)
     channel = str(args.channel)
     power_constraint = str(args.power_constraint)
+    stdev = str(args.stdev)
 
     EbN0_dB = range(-14, 29) # SNR range
 
@@ -410,4 +413,5 @@ if __name__ == '__main__':
         j = j + 1
 
     sio.savemat('data_CORTICAL.mat', {'MI_VAR': MI_VAR_total, 'ch_input': features_x, 'ch_output':features_y})
+
 
