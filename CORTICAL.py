@@ -386,7 +386,7 @@ if __name__ == '__main__':
     alpha = float(args.alpha)
     channel = str(args.channel)
     power_constraint = str(args.power_constraint)
-    stdev = str(args.stdev)
+    stdev = float(args.stdev)
 
     EbN0_dB = range(-14, 29) # SNR range
 
@@ -413,5 +413,6 @@ if __name__ == '__main__':
         j = j + 1
 
     sio.savemat('data_CORTICAL.mat', {'MI_VAR': MI_VAR_total, 'ch_input': features_x, 'ch_output':features_y})
+
 
 
