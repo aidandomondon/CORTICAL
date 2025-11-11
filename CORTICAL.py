@@ -6,7 +6,7 @@ from tensorflow.keras import layers
 
 from keras.layers import BatchNormalization, Input, Dense, GaussianNoise, Concatenate, Lambda
 from keras.models import Sequential, Model
-from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.optimizers.legacy import Adam
 from tensorflow.python.keras import backend as K
 
 
@@ -419,6 +419,7 @@ if __name__ == '__main__':
         j = j + 1
 
     sio.savemat('data_CORTICAL.mat', {'MI_VAR': MI_VAR_total, 'ch_input': features_x, 'ch_output':features_y})
+
 
 
 
