@@ -6,7 +6,7 @@ from tensorflow.keras import layers
 
 from keras.layers import BatchNormalization, Input, Dense, GaussianNoise, Concatenate, Lambda
 from keras.models import Sequential, Model
-from tensorflow.keras.optimizers.legacy import Adam
+from tensorflow.keras.optimizers import Adam
 from tensorflow.python.keras import backend as K
 
 
@@ -46,13 +46,6 @@ def my_log_power(y_true, y_pred):
 
 def my_reciprocal_power(y_true, y_pred):
     return K.maximum(K.mean(K.pow(y_pred,-1)-1)-1,0)
-
-
-def get_lr_metric(optimizer):
-    # to print out the learning rate
-    def lr(y_true, y_pred):
-        return optimizer._decayed_lr(tf.float32)
-    return lr
 
 def Rayleigh_Channel(x):
     # Rayleigh in tensor
@@ -110,7 +103,6 @@ class CORTICAL():
         N = self.eps**2
 
         optimizer_G = Adam(0.0002, 0.5)
-        lr_metric = get_lr_metric(optimizer_G)
         optimizer_D = Adam(0.002, 0.5)
 
         # Build and compile the discriminator
@@ -194,18 +186,18 @@ class CORTICAL():
         if self.channel == 'AICN':
             print('Creating generator with AICN constraints..')
             self.combined_g.compile(loss=[my_binary_crossentropy, wasserstein_loss, my_log_power, my_average_power], loss_weights=[self.alpha, 1, 1, 0],
-                                optimizer=optimizer_G, metrics=[lr_metric])
+                                optimizer=optimizer_G)
         elif self.channel == 'EXP':
             print('Creating generator with EXP constraints..')
             self.combined_g.compile(loss=[my_binary_crossentropy, wasserstein_loss, my_reciprocal_power, my_average_power], loss_weights=[self.alpha, 1, 0.03, 0],
-                                optimizer=optimizer_G, metrics=[lr_metric])
+                                optimizer=optimizer_G)
         elif self.channel == 'MIMO':
             print('Creating generator with MIMO elliptical constraints..')
             self.combined_g.compile(loss=[my_binary_crossentropy, wasserstein_loss, my_peak_power_ellipse, my_average_power], loss_weights=[self.alpha, 1, self.reg_PP, self.reg_AP],
-                                optimizer=optimizer_G, metrics=[lr_metric])
+                                optimizer=optimizer_G)
         else:
             self.combined_g.compile(loss=[my_binary_crossentropy, wasserstein_loss, my_peak_power, my_average_power], loss_weights=[self.alpha, 1, self.reg_PP, self.reg_AP],
-                                optimizer=optimizer_G, metrics=[lr_metric, lr_metric, lr_metric, lr_metric])
+                                optimizer=optimizer_G)
 
 
     def build_generator(self):
@@ -419,6 +411,7 @@ if __name__ == '__main__':
         j = j + 1
 
     sio.savemat('data_CORTICAL.mat', {'MI_VAR': MI_VAR_total, 'ch_input': features_x, 'ch_output':features_y})
+
 
 
 
