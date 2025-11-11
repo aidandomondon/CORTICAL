@@ -125,8 +125,12 @@ class CORTICAL():
 
         self.encoder = tf.keras.Model(s_in, x_n)
 
+        if channel == 'CUSTOM_GAUSSIAN':
 
-        if channel == 'AWGN' or 'MIMO':
+            ch = layers.Lambda(lambda x: x)(x_n)
+            y = layers.GaussianNoise(stdev)(ch)
+        
+        elif channel == 'AWGN' or 'MIMO':
 
             ch = layers.Lambda(lambda x: x)(x_n)
             y = layers.GaussianNoise(np.sqrt(N))(ch)  # AWGN layer
@@ -267,7 +271,9 @@ class CORTICAL():
                 ch_input = self.encoder.predict(noise)
                 eps = self.eps
 
-                if self.channel == 'AWGN' or 'MIMO':
+                if self.channel == 'CUSTOM_GAUSSIAN':
+                    ch_output = ch_input + eps * np.random.normal(0, stdev, (batch_size, self.data_dim))
+                elif self.channel == 'AWGN' or 'MIMO':
                     ch_output = ch_input + eps * np.random.normal(0, 1, (batch_size, self.data_dim))
                 elif self.channel == 'UNIF':
                     delta = np.sqrt(12)*eps
@@ -413,6 +419,7 @@ if __name__ == '__main__':
         j = j + 1
 
     sio.savemat('data_CORTICAL.mat', {'MI_VAR': MI_VAR_total, 'ch_input': features_x, 'ch_output':features_y})
+
 
 
 
