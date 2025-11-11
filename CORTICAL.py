@@ -205,7 +205,7 @@ class CORTICAL():
                                 optimizer=optimizer_G, metrics=[lr_metric])
         else:
             self.combined_g.compile(loss=[my_binary_crossentropy, wasserstein_loss, my_peak_power, my_average_power], loss_weights=[self.alpha, 1, self.reg_PP, self.reg_AP],
-                                optimizer=optimizer_G, metrics=[lr_metric])
+                                optimizer=optimizer_G, metrics=[lr_metric, lr_metric, lr_metric, lr_metric])
 
 
     def build_generator(self):
@@ -419,6 +419,7 @@ if __name__ == '__main__':
         j = j + 1
 
     sio.savemat('data_CORTICAL.mat', {'MI_VAR': MI_VAR_total, 'ch_input': features_x, 'ch_output':features_y})
+
 
 
 
