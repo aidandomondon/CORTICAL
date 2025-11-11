@@ -167,7 +167,7 @@ class CORTICAL():
 
         xy = layers.Concatenate(name='network_concatenate_layer_1')([x_n, y])
         y_bar_input = layers.Lambda(lambda x: shuffleColumns(x))(y)  # shuffle y input as y_bar
-        x_y = layers.Concatenate(name='network/concatenate_layer_2')([x_n, y_bar_input])
+        x_y = layers.Concatenate(name='network_concatenate_layer_2')([x_n, y_bar_input])
 
         # The discriminator takes as input joint or marginal vectors
         d_xy = self.discriminator(xy)
@@ -419,6 +419,7 @@ if __name__ == '__main__':
         j = j + 1
 
     sio.savemat('data_CORTICAL.mat', {'MI_VAR': MI_VAR_total, 'ch_input': features_x, 'ch_output':features_y})
+
 
 
 
